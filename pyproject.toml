@@ -3,6 +3,27 @@ name = "flask-firebase-admin"
 version = "0.1.0"
 description = "Firebase for Flask"
 authors = ["Andrew Ross <andrew.ross.mail@gmail.com>"]
+license = "MIT"
+
+readme = "README.md"
+
+homepage = "https://github.com/andrewrosss/flask-firebase-admin"
+# repository = "https://github.com/andrewrosss/flask-firebase-admin"
+# documentation = "https://github.com/andrewrosss/flask-firebase-admin"
+
+keywords = ["flask", "firebase", "admin", "auth"]
+
+classifiers = [
+    "Programming Language :: Python :: 3.0",
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Developers",
+    "Environment :: Web Environment",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Framework :: Flask",
+    "Development Status :: 4 - Beta",
+]
 
 [tool.poetry.dependencies]
 python = "^3.7"
