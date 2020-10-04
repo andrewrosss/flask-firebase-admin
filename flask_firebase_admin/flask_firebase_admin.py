@@ -26,7 +26,7 @@ from flask import Response
 from .status_codes import HTTP_401_UNAUTHORIZED
 
 
-FIREBASE_ADMIN_AUTHORIZATION_SCHEME = "JWT"
+FIREBASE_ADMIN_AUTHORIZATION_SCHEME = "Bearer"
 FIREBASE_ADMIN_CHECK_REVOKED = True
 
 
@@ -110,14 +110,13 @@ class FirebaseAdmin(object):
             header_prefix, token = parse_header_credentials(header)
             if header_prefix is None or token is None:
                 return self.make_401(
-                    "Invalid Authorization header format, expecting: "
+                    "Invalid authorization header format, expecting: "
                     f"{expected_prefix} <token>"
                 )
 
             if header_prefix != expected_prefix:
                 return self.make_401(
-                    "Invalid Authorization header prefix, "
-                    f"expecting prefix: {expected_prefix}"
+                    f"Invalid authorization scheme, expecting: {expected_prefix}"
                 )
 
             try:
