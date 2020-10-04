@@ -6,6 +6,16 @@ from typing import Union
 
 import firebase_admin
 from firebase_admin import auth
+from firebase_admin import credentials
+from firebase_admin import db
+from firebase_admin import exceptions
+from firebase_admin import firestore
+from firebase_admin import instance_id
+from firebase_admin import messaging
+from firebase_admin import ml
+from firebase_admin import project_management
+from firebase_admin import storage
+from firebase_admin import tenant_mgt
 from flask import current_app
 from flask import Flask
 from flask import make_response
@@ -48,6 +58,46 @@ class FirebaseAdmin(object):
     @property
     def auth(self) -> ModuleType:
         return auth
+
+    @property
+    def credentials(self) -> ModuleType:
+        return credentials
+
+    @property
+    def db(self) -> ModuleType:
+        return db
+
+    @property
+    def exceptions(self) -> ModuleType:
+        return exceptions
+
+    @property
+    def firestore(self) -> ModuleType:
+        return firestore
+
+    @property
+    def instance_id(self) -> ModuleType:
+        return instance_id
+
+    @property
+    def messaging(self) -> ModuleType:
+        return messaging
+
+    @property
+    def ml(self) -> ModuleType:
+        return ml
+
+    @property
+    def project_management(self) -> ModuleType:
+        return project_management
+
+    @property
+    def storage(self) -> ModuleType:
+        return storage
+
+    @property
+    def tenant_mgt(self) -> ModuleType:
+        return tenant_mgt
 
     def jwt_required(self, f: Callable) -> Callable:
         @wraps(f)
