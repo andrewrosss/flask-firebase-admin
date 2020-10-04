@@ -122,8 +122,8 @@ class FirebaseAdmin(object):
 
             try:
                 check_revoked = current_app.config["FIREBASE_ADMIN_CHECK_REVOKED"]
-                user = auth.verify_id_token(token, self.admin, check_revoked)
-                request.user = user  # type: ignore
+                jwt_payload = auth.verify_id_token(token, self.admin, check_revoked)
+                request.jwt_payload = jwt_payload  # type: ignore
             except (
                 auth.InvalidIdTokenError,
                 auth.ExpiredIdTokenError,
