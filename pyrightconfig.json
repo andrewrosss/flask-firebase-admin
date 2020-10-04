@@ -1,0 +1,7 @@
+{
+    "exclude": [
+        "**/venv",
+        "**/__pycache__"
+    ],
+    "stubPath": "typings"
+}
