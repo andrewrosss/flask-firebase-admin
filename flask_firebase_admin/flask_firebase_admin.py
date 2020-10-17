@@ -92,9 +92,8 @@ class FirebaseAdmin(object):
                 )
 
             try:
-                check_revoked = current_app.config["FIREBASE_ADMIN_CHECK_REVOKED"]
                 payload_attr = current_app.config["FIREBASE_ADMIN_PAYLOAD_ATTR"]
-                jwt_payload = auth.verify_id_token(token, self.admin, check_revoked)
+                jwt_payload = self.decode_token(token)
                 setattr(request, payload_attr, jwt_payload)
             except (
                 auth.InvalidIdTokenError,
@@ -107,6 +106,10 @@ class FirebaseAdmin(object):
             return f(*args, **kwargs)
 
         return wrap
+
+    def decode_token(self, token):
+        check_revoked = current_app.config["FIREBASE_ADMIN_CHECK_REVOKED"]
+        return auth.verify_id_token(token, self.admin, check_revoked)
 
     def make_401(self, message: str) -> Response:
         body = {"error": {"message": message}}
