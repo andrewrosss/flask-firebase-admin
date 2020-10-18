@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flask-firebase-admin"
-version = "0.2.0"
+version = "0.2.1"
 description = "Firebase for Flask"
 authors = ["Andrew Ross <andrew.ross.mail@gmail.com>"]
 license = "MIT"
