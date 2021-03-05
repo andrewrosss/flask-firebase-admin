@@ -57,6 +57,7 @@ class FirebaseAdmin(object):
             "FIREBASE_ADMIN_AUTHORIZATION_SCHEME",
             FIREBASE_ADMIN_AUTHORIZATION_SCHEME,
         )
+        app.config.setdefault("FIREBASE_ADMIN_OPTIONS")
         app.config.setdefault(
             "FIREBASE_ADMIN_CHECK_REVOKED", FIREBASE_ADMIN_CHECK_REVOKED
         )
@@ -65,7 +66,8 @@ class FirebaseAdmin(object):
         )
 
         cred = app.config["FIREBASE_ADMIN_CREDENTIAL"]
-        self._admin = firebase_admin.initialize_app(cred)
+        options = app.config["FIREBASE_ADMIN_OPTIONS"]
+        self._admin = firebase_admin.initialize_app(cred, options=options)
 
     @property
     def admin(self) -> firebase_admin.App:
