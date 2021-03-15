@@ -107,6 +107,14 @@ The `FirebaseAdmin` object can be configured in the following ways:
   firebase = FirebaseAdmin(app)  # no longer uses GOOGLE_APPLICATION_CREDENTIALS
   ```
 
+- `FIREBASE_ADMIN_OPTIONS`
+
+  **Defaults to `None`**. This config is passed directly to `admin.initialize_app()` as the second `options` argument. From the Firebase Admin SDK docs: _A dictionary of configuration options (optional). Supported options include **databaseURL**, **storageBucket**, **projectId**, **databaseAuthVariableOverride**, **serviceAccountId** and **httpTimeout**. If httpTimeout is not set, the SDK uses a default timeout of 120 seconds._
+
+- `FIREBASE_ADMIN_NAME`
+
+  **Defaults to `'[DEFAULT]'`**. This config is passed directly to `admin.initialize_app()` as the third `name` argument.
+
 - `FIREBASE_ADMIN_AUTHORIZATION_SCHEME`
 
   **Defaults to `'Bearer'`**. This is the authorization scheme expected by the `FirebaseAdmin` object. Changing this parameter changes the format of the auth header that is required by the client. For example, if we set this to `'JWT'` we would then need to include an authorization header of the form: `Authorization: JWT <token>` when making requests to protected routes.
@@ -119,7 +127,11 @@ The `FirebaseAdmin` object can be configured in the following ways:
 
   **Defaults to `'jwt_payload'`**. This is attribute on the flask `request` object from which we can access the JWT payload data. If we were to change this to, say, `'jwt'` we would then access the JWT payload using `request.jwt`
 
-An example using the available configuration:
+- `FIREBASE_ADMIN_RAISE_IF_APP_EXISTS`
+
+  **Defaults to `True`**. Internally, `flask-firebase-admin` calls `admin.initialize_app()`, if the app with the configured name already exists the Firebase Admin SDK raises a `ValueError` exception. When this config variable is set to `False`, `flask-firebase-admin` will catch this error, get, and subsequently use the existing admin app by the given name.
+
+An example using more of the available configuration:
 
 ```python
 from flask import Flask, request
