@@ -30,6 +30,7 @@ FIREBASE_ADMIN_AUTHORIZATION_SCHEME = "Bearer"
 FIREBASE_ADMIN_CHECK_REVOKED = True
 FIREBASE_ADMIN_PAYLOAD_ATTR = "jwt_payload"
 FIREBASE_ADMIN_NAME = firebase_admin._DEFAULT_APP_NAME
+FIREBASE_ADMIN_RAISE_IF_APP_EXISTS = True
 
 
 class FirebaseAdmin(object):
@@ -66,11 +67,17 @@ class FirebaseAdmin(object):
         app.config.setdefault(
             "FIREBASE_ADMIN_PAYLOAD_ATTR", FIREBASE_ADMIN_PAYLOAD_ATTR
         )
+        app.config.setdefault(
+            "FIREBASE_ADMIN_RAISE_IF_APP_EXISTS", FIREBASE_ADMIN_RAISE_IF_APP_EXISTS
+        )
+
+        raise_if_app_exists = app.config["FIREBASE_ADMIN_RAISE_IF_APP_EXISTS"]
 
         cred = app.config["FIREBASE_ADMIN_CREDENTIAL"]
         options = app.config["FIREBASE_ADMIN_OPTIONS"]
         name = app.config["FIREBASE_ADMIN_NAME"]
-        self._admin = firebase_admin.initialize_app(cred, options=options, name=name)
+
+        self._admin = try_initialize_app(cred, options, name, raise_if_app_exists)
 
     @property
     def admin(self) -> firebase_admin.App:
@@ -139,3 +146,19 @@ def parse_header_credentials(header: str) -> Union[Tuple[None, None], Tuple[str,
         return type_, credential
     except ValueError:
         return None, None
+
+
+def try_initialize_app(
+    cred, options, name, raise_if_app_exists: bool = True
+) -> firebase_admin.App:
+    try:
+        return firebase_admin.initialize_app(cred, options=options, name=name)
+    except ValueError:
+        if raise_if_app_exists:
+            msg = (
+                f"The firebase admin app [{name!r}] already exists. If this is "
+                "expected set app.config['FIREBASE_ADMIN_RAISE_IF_APP_EXISTS'] = False "
+                "to have flask-firebase-admin to use the existing firebase admin app."
+            )
+            raise RuntimeError(msg)
+        return firebase_admin.get_app(name)
