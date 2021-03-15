@@ -29,6 +29,7 @@ from .status_codes import HTTP_401_UNAUTHORIZED
 FIREBASE_ADMIN_AUTHORIZATION_SCHEME = "Bearer"
 FIREBASE_ADMIN_CHECK_REVOKED = True
 FIREBASE_ADMIN_PAYLOAD_ATTR = "jwt_payload"
+FIREBASE_ADMIN_NAME = firebase_admin._DEFAULT_APP_NAME
 
 
 class FirebaseAdmin(object):
@@ -53,11 +54,12 @@ class FirebaseAdmin(object):
 
     def init_app(self, app: Flask) -> None:
         app.config.setdefault("FIREBASE_ADMIN_CREDENTIAL")
+        app.config.setdefault("FIREBASE_ADMIN_OPTIONS")
+        app.config.setdefault("FIREBASE_ADMIN_NAME", FIREBASE_ADMIN_NAME)
         app.config.setdefault(
             "FIREBASE_ADMIN_AUTHORIZATION_SCHEME",
             FIREBASE_ADMIN_AUTHORIZATION_SCHEME,
         )
-        app.config.setdefault("FIREBASE_ADMIN_OPTIONS")
         app.config.setdefault(
             "FIREBASE_ADMIN_CHECK_REVOKED", FIREBASE_ADMIN_CHECK_REVOKED
         )
@@ -67,7 +69,8 @@ class FirebaseAdmin(object):
 
         cred = app.config["FIREBASE_ADMIN_CREDENTIAL"]
         options = app.config["FIREBASE_ADMIN_OPTIONS"]
-        self._admin = firebase_admin.initialize_app(cred, options=options)
+        name = app.config["FIREBASE_ADMIN_NAME"]
+        self._admin = firebase_admin.initialize_app(cred, options=options, name=name)
 
     @property
     def admin(self) -> firebase_admin.App:
