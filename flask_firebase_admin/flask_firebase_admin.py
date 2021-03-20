@@ -54,9 +54,7 @@ class FirebaseAdmin(object):
             self.init_app(app)
 
     def init_app(self, app: Flask) -> None:
-        app.config.setdefault("FIREBASE_ADMIN_CREDENTIAL")
-        app.config.setdefault("FIREBASE_ADMIN_OPTIONS")
-        app.config.setdefault("FIREBASE_ADMIN_NAME", FIREBASE_ADMIN_NAME)
+        app.config.setdefault("FIREBASE_ADMIN_APP")
         app.config.setdefault(
             "FIREBASE_ADMIN_AUTHORIZATION_SCHEME",
             FIREBASE_ADMIN_AUTHORIZATION_SCHEME,
@@ -67,15 +65,23 @@ class FirebaseAdmin(object):
         app.config.setdefault(
             "FIREBASE_ADMIN_PAYLOAD_ATTR", FIREBASE_ADMIN_PAYLOAD_ATTR
         )
+
+        if app.config["FIREBASE_ADMIN_APP"]:
+            # we've been given a firebase admin app, store it, and return early
+            self._admin = app.config["FIREBASE_ADMIN_APP"]
+            return
+
+        app.config.setdefault("FIREBASE_ADMIN_CREDENTIAL")
+        app.config.setdefault("FIREBASE_ADMIN_OPTIONS")
+        app.config.setdefault("FIREBASE_ADMIN_NAME", FIREBASE_ADMIN_NAME)
         app.config.setdefault(
             "FIREBASE_ADMIN_RAISE_IF_APP_EXISTS", FIREBASE_ADMIN_RAISE_IF_APP_EXISTS
         )
 
-        raise_if_app_exists = app.config["FIREBASE_ADMIN_RAISE_IF_APP_EXISTS"]
-
         cred = app.config["FIREBASE_ADMIN_CREDENTIAL"]
         options = app.config["FIREBASE_ADMIN_OPTIONS"]
         name = app.config["FIREBASE_ADMIN_NAME"]
+        raise_if_app_exists = app.config["FIREBASE_ADMIN_RAISE_IF_APP_EXISTS"]
 
         self._admin = try_initialize_app(cred, options, name, raise_if_app_exists)
 
