@@ -1,6 +1,8 @@
 from functools import wraps
 from types import ModuleType
+from typing import Any
 from typing import Callable
+from typing import Dict
 from typing import Tuple
 from typing import Union
 
@@ -100,13 +102,13 @@ class FirebaseAdmin(object):
             header_prefix, token = parse_header_credentials(header)
             if header_prefix is None or token is None:
                 return self.make_401(
-                    "Invalid authorization header format, expecting: "
+                    "Invalid authorization header format. Expected: "
                     f"{expected_prefix} <token>"
                 )
 
             if header_prefix != expected_prefix:
                 return self.make_401(
-                    f"Invalid authorization scheme, expecting: {expected_prefix}"
+                    f"Invalid authorization scheme. Expected: {expected_prefix}"
                 )
 
             try:
@@ -125,7 +127,7 @@ class FirebaseAdmin(object):
 
         return wrap
 
-    def decode_token(self, token):
+    def decode_token(self, token: str) -> Dict[str, Any]:
         check_revoked = current_app.config["FIREBASE_ADMIN_CHECK_REVOKED"]
         return auth.verify_id_token(token, self.admin, check_revoked)
 
