@@ -2,7 +2,6 @@ from typing import Tuple
 
 import firebase_admin
 import pytest
-from flask.helpers import url_for
 from pytest_mock.plugin import MockerFixture
 
 import flask_firebase_admin
@@ -10,7 +9,6 @@ import flask_firebase_admin.flask_firebase_admin as ffa
 from tests.conftest import AppFixture
 from tests.conftest import GetAppFixture
 from tests.conftest import InitializeAppFixture
-from tests.conftest import SampleAppFixture
 from tests.conftest import TryInitializeAppFixture
 from tests.conftest import VerifyIdTokenFixture
 
