@@ -1,6 +1,8 @@
 from functools import wraps
 from types import ModuleType
+from typing import Any
 from typing import Callable
+from typing import Dict
 from typing import Tuple
 from typing import Union
 
@@ -54,9 +56,7 @@ class FirebaseAdmin(object):
             self.init_app(app)
 
     def init_app(self, app: Flask) -> None:
-        app.config.setdefault("FIREBASE_ADMIN_CREDENTIAL")
-        app.config.setdefault("FIREBASE_ADMIN_OPTIONS")
-        app.config.setdefault("FIREBASE_ADMIN_NAME", FIREBASE_ADMIN_NAME)
+        app.config.setdefault("FIREBASE_ADMIN_APP")
         app.config.setdefault(
             "FIREBASE_ADMIN_AUTHORIZATION_SCHEME",
             FIREBASE_ADMIN_AUTHORIZATION_SCHEME,
@@ -67,15 +67,23 @@ class FirebaseAdmin(object):
         app.config.setdefault(
             "FIREBASE_ADMIN_PAYLOAD_ATTR", FIREBASE_ADMIN_PAYLOAD_ATTR
         )
+
+        if app.config["FIREBASE_ADMIN_APP"]:
+            # we've been given a firebase admin app, store it, and return early
+            self._admin = app.config["FIREBASE_ADMIN_APP"]
+            return
+
+        app.config.setdefault("FIREBASE_ADMIN_CREDENTIAL")
+        app.config.setdefault("FIREBASE_ADMIN_OPTIONS")
+        app.config.setdefault("FIREBASE_ADMIN_NAME", FIREBASE_ADMIN_NAME)
         app.config.setdefault(
             "FIREBASE_ADMIN_RAISE_IF_APP_EXISTS", FIREBASE_ADMIN_RAISE_IF_APP_EXISTS
         )
 
-        raise_if_app_exists = app.config["FIREBASE_ADMIN_RAISE_IF_APP_EXISTS"]
-
         cred = app.config["FIREBASE_ADMIN_CREDENTIAL"]
         options = app.config["FIREBASE_ADMIN_OPTIONS"]
         name = app.config["FIREBASE_ADMIN_NAME"]
+        raise_if_app_exists = app.config["FIREBASE_ADMIN_RAISE_IF_APP_EXISTS"]
 
         self._admin = try_initialize_app(cred, options, name, raise_if_app_exists)
 
@@ -94,13 +102,13 @@ class FirebaseAdmin(object):
             header_prefix, token = parse_header_credentials(header)
             if header_prefix is None or token is None:
                 return self.make_401(
-                    "Invalid authorization header format, expecting: "
+                    "Invalid authorization header format. Expected: "
                     f"{expected_prefix} <token>"
                 )
 
             if header_prefix != expected_prefix:
                 return self.make_401(
-                    f"Invalid authorization scheme, expecting: {expected_prefix}"
+                    f"Invalid authorization scheme. Expected: {expected_prefix}"
                 )
 
             try:
@@ -119,7 +127,7 @@ class FirebaseAdmin(object):
 
         return wrap
 
-    def decode_token(self, token):
+    def decode_token(self, token: str) -> Dict[str, Any]:
         check_revoked = current_app.config["FIREBASE_ADMIN_CHECK_REVOKED"]
         return auth.verify_id_token(token, self.admin, check_revoked)
 
