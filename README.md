@@ -77,6 +77,20 @@ Internally the `jwt_required` method provided by the `FirebaseAdmin` object call
 
 ## Configuration
 
+> **Note:** The following groups of configuration parameters are mutually exclusive:
+>
+> - `FIREBASE_ADMIN_APP` (This config parameter takes precendence and if specified then configuration from the other group is ignored)
+>
+>   ***
+>
+> - `FIREBASE_ADMIN_CREDENTIAL`
+>
+>   `FIREBASE_ADMIN_OPTIONS`
+>
+>   `FIREBASE_ADMIN_NAME`
+>
+>   `FIREBASE_ADMIN_RAISE_IF_APP_EXISTS`
+
 The `FirebaseAdmin` object can be configured in the following ways:
 
 - `FIREBASE_ADMIN_CREDENTIAL`
@@ -132,6 +146,27 @@ The `FirebaseAdmin` object can be configured in the following ways:
 - `FIREBASE_ADMIN_RAISE_IF_APP_EXISTS`
 
   **Defaults to `True`**. Internally, `flask-firebase-admin` calls `admin.initialize_app()`, if the app with the configured name already exists the Firebase Admin SDK raises a `ValueError` exception. When this config variable is set to `False`, `flask-firebase-admin` will catch this error, get, and subsequently use the existing admin app by the given name.
+
+- `FIREBASE_ADMIN_APP`
+
+  **Defaults to `None`**. This is a way to explicity provided the `FirebaseAdmin` extension with a particular firebase admin app to use. For example:
+
+  ```python
+  import firebase_admin
+  from flask import Flask
+  from flask_firebase_admin import FirebaseAdmin
+
+  # elsewhere ...
+  default_admin_app = firebase_admin.initialize_app()
+  other_admin_app = firebase_admin.initialize_app(other_creds, other_options, other_name)
+
+  # then ...
+  app = Flask(__name__)
+  app.config["FIREBASE_ADMIN_APP"] = other_admin_app
+
+  # now firebase.jwt_required will use other_admin_app for authentication
+  firebase = FirebaseAdmin(app)
+  ```
 
 An example using more of the available configuration:
 
