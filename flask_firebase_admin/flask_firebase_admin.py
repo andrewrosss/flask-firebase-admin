@@ -146,14 +146,11 @@ def get_authorization_header(request: Request) -> Union[None, str]:
 
 
 def parse_header_credentials(header: str) -> Union[Tuple[None, None], Tuple[str, str]]:
-    try:
-        values = header.split(" ")
-        if len(values) != 2:
-            return None, None
-        type_, credential = values
-        return type_, credential
-    except ValueError:
+    values = header.split(" ")
+    if len(values) != 2:
         return None, None
+    type_, credential = values
+    return type_, credential
 
 
 def try_initialize_app(
