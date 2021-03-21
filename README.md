@@ -2,6 +2,8 @@
 
 Add Firebase (a Firebase Admin app) to a Flask application.
 
+[![Tests](https://github.com/andrewrosss/flask-firebase-admin/actions/workflows/test.yaml/badge.svg)](https://github.com/andrewrosss/flask-firebase-admin/actions/workflows/test.yaml) [![codecov](https://codecov.io/gh/andrewrosss/flask-firebase-admin/branch/master/graph/badge.svg?token=JM7PL13H59)](https://codecov.io/gh/andrewrosss/flask-firebase-admin) [![Type Check](https://github.com/andrewrosss/flask-firebase-admin/actions/workflows/type-check.yaml/badge.svg)](https://github.com/andrewrosss/flask-firebase-admin/actions/workflows/type-check.yaml) [![Code Style](https://github.com/andrewrosss/flask-firebase-admin/actions/workflows/lint.yaml/badge.svg)](https://github.com/andrewrosss/flask-firebase-admin/actions/workflows/lint.yaml)
+
 ## Installation
 
 ```bash
