@@ -45,7 +45,7 @@ VerifyIdTokenFixture = MagicMock
 @pytest.fixture
 def decode_token(mocker: MockerFixture):
     dt = mocker.patch(
-        "flask_firebase_admin.flask_firebase_admin.FirebaseAdmin.decode_token"
+        "flask_firebase_admin.flask_firebase_admin.FirebaseAdmin.decode_token",
     )
     dt.return_value = {"email": "test@email.com"}
     return
@@ -57,7 +57,7 @@ DecodeTokenFixture = MagicMock
 @pytest.fixture
 def decode_token_raises(mocker: MockerFixture):
     dt = mocker.patch(
-        "flask_firebase_admin.flask_firebase_admin.FirebaseAdmin.decode_token"
+        "flask_firebase_admin.flask_firebase_admin.FirebaseAdmin.decode_token",
     )
     dt.side_effect = auth.InvalidIdTokenError("test message")
     return
@@ -86,7 +86,8 @@ def sample_app(
     @admin.jwt_required
     def protected():
         # we now access the JWT payload using request.firebase_jwt
-        return {"message": f"Hello {flask.request.jwt_payload['email']}!"}
+        email = flask.request.jwt_payload["email"]  # type: ignore
+        return {"message": f"Hello {email}!"}
 
     return app
 
@@ -106,7 +107,8 @@ def sample_app_no_valid_token(
     @admin.jwt_required
     def protected():
         # we now access the JWT payload using request.firebase_jwt
-        return {"message": f"Hello {flask.request.jwt_payload['email']}!"}
+        email = flask.request.jwt_payload["email"]  # type: ignore
+        return {"message": f"Hello {email}!"}
 
     return app
 

@@ -15,7 +15,9 @@ from tests.conftest import VerifyIdTokenFixture
 
 class TestDefaultConfig:
     def test_init_with___init__(
-        self, app: AppFixture, try_initialize_app: TryInitializeAppFixture
+        self,
+        app: AppFixture,
+        try_initialize_app: TryInitializeAppFixture,
     ):
         # create and initialize the extension
         admin = flask_firebase_admin.FirebaseAdmin(app)
@@ -30,12 +32,17 @@ class TestDefaultConfig:
         assert app.config["FIREBASE_ADMIN_NAME"] == firebase_admin._DEFAULT_APP_NAME
         assert app.config["FIREBASE_ADMIN_RAISE_IF_APP_EXISTS"] is True
         try_initialize_app.assert_called_once_with(
-            None, None, firebase_admin._DEFAULT_APP_NAME, True
+            None,
+            None,
+            firebase_admin._DEFAULT_APP_NAME,
+            True,
         )
         assert admin.admin is not None
 
     def test_init_with_init_app(
-        self, app: AppFixture, try_initialize_app: TryInitializeAppFixture
+        self,
+        app: AppFixture,
+        try_initialize_app: TryInitializeAppFixture,
     ):
         # create the extension
         admin = flask_firebase_admin.FirebaseAdmin()
@@ -67,7 +74,10 @@ class TestDefaultConfig:
         assert app.config["FIREBASE_ADMIN_NAME"] == firebase_admin._DEFAULT_APP_NAME
         assert app.config["FIREBASE_ADMIN_RAISE_IF_APP_EXISTS"] is True
         try_initialize_app.assert_called_once_with(
-            None, None, firebase_admin._DEFAULT_APP_NAME, True
+            None,
+            None,
+            firebase_admin._DEFAULT_APP_NAME,
+            True,
         )
         assert admin.admin is not None
 
@@ -80,7 +90,9 @@ class TestDefaultConfig:
 
 class TestCustomConfig:
     def test_firebase_admin_app(
-        self, app: AppFixture, try_initialize_app: TryInitializeAppFixture
+        self,
+        app: AppFixture,
+        try_initialize_app: TryInitializeAppFixture,
     ):
         admin_app = "this-is-my-admin-app"
         app.config["FIREBASE_ADMIN_APP"] = admin_app
@@ -97,7 +109,9 @@ class TestCustomConfig:
         assert "FIREBASE_ADMIN_RAISE_IF_APP_EXISTS" not in app.config
 
     def test_firebase_firebase_admin_credentials(
-        self, app: AppFixture, try_initialize_app: TryInitializeAppFixture
+        self,
+        app: AppFixture,
+        try_initialize_app: TryInitializeAppFixture,
     ):
         cred = "my-creds"
         options = "my-options"
@@ -112,7 +126,10 @@ class TestCustomConfig:
 
         assert admin.admin is try_initialize_app.return_value
         try_initialize_app.assert_called_once_with(
-            cred, options, name, raise_if_app_exists
+            cred,
+            options,
+            name,
+            raise_if_app_exists,
         )
 
 
@@ -138,13 +155,15 @@ class TestJWTRequired:
         expected_status_code = 401
 
         get_response = client.get(
-            self.protected_route, headers={"Authorization": "{{TOKEN}}"}
+            self.protected_route,
+            headers={"Authorization": "{{TOKEN}}"},
         )
         assert get_response.status_code == expected_status_code
         assert get_response.json["error"]["message"] == expected_message
 
         post_response = client.post(
-            self.protected_route, headers={"Authorization": "{{TOKEN}}"}
+            self.protected_route,
+            headers={"Authorization": "{{TOKEN}}"},
         )
         assert post_response.status_code == expected_status_code
         assert post_response.json["error"]["message"] == expected_message
@@ -154,13 +173,15 @@ class TestJWTRequired:
         expected_status_code = 401
 
         get_response = client.get(
-            self.protected_route, headers={"Authorization": "JWT {{TOKEN}}"}
+            self.protected_route,
+            headers={"Authorization": "JWT {{TOKEN}}"},
         )
         assert get_response.status_code == expected_status_code
         assert get_response.json["error"]["message"] == expected_message
 
         post_response = client.post(
-            self.protected_route, headers={"Authorization": "JWT {{TOKEN}}"}
+            self.protected_route,
+            headers={"Authorization": "JWT {{TOKEN}}"},
         )
         assert post_response.status_code == expected_status_code
         assert post_response.json["error"]["message"] == expected_message
@@ -170,13 +191,15 @@ class TestJWTRequired:
         expected_status_code = 401
 
         get_response = client.get(
-            self.protected_route, headers={"Authorization": "Bearer {{TOKEN}}"}
+            self.protected_route,
+            headers={"Authorization": "Bearer {{TOKEN}}"},
         )
         assert get_response.status_code == expected_status_code
         assert get_response.json["error"]["message"] == expected_message
 
         post_response = client.post(
-            self.protected_route, headers={"Authorization": "Bearer {{TOKEN}}"}
+            self.protected_route,
+            headers={"Authorization": "Bearer {{TOKEN}}"},
         )
         assert post_response.status_code == expected_status_code
         assert post_response.json["error"]["message"] == expected_message
@@ -186,13 +209,15 @@ class TestJWTRequired:
         expected_status_code = 200
 
         get_response = client.get(
-            self.protected_route, headers={"Authorization": "Bearer {{TOKEN}}"}
+            self.protected_route,
+            headers={"Authorization": "Bearer {{TOKEN}}"},
         )
         assert get_response.status_code == expected_status_code
         assert get_response.json["message"] == expected_message
 
         post_response = client.post(
-            self.protected_route, headers={"Authorization": "Bearer {{TOKEN}}"}
+            self.protected_route,
+            headers={"Authorization": "Bearer {{TOKEN}}"},
         )
         assert post_response.status_code == expected_status_code
         assert post_response.json["message"] == expected_message
@@ -226,7 +251,11 @@ class TestMake401:
         ],
     )
     def test_generated_response_object(
-        self, app: AppFixture, message, auth_scheme, expected_header
+        self,
+        app: AppFixture,
+        message,
+        auth_scheme,
+        expected_header,
     ):
         app.config["FIREBASE_ADMIN_AUTHORIZATION_SCHEME"] = auth_scheme
 
@@ -237,19 +266,24 @@ class TestMake401:
 
         assert response.headers["WWW-Authenticate"] == expected_header
         assert response.status_code == 401
-        assert response.is_json and response.json["error"]["message"] == message
+        assert (
+            response.is_json
+            and response.json["error"]["message"] == message  # type: ignore
+        )
 
 
 class TestTryInitializeApp:
     def test_calls_firebase_admin_initialize_app(
-        self, initialize_app: InitializeAppFixture
+        self,
+        initialize_app: InitializeAppFixture,
     ):
         cred, options, name = "my-creds", "my-options", "my-name"
         ffa.try_initialize_app(cred, options, name)
         initialize_app.assert_called_once_with(cred, options=options, name=name)
 
     def test_raises_RuntimeError_by_default_when_admin_app_already_initialize(
-        self, initialize_app: InitializeAppFixture
+        self,
+        initialize_app: InitializeAppFixture,
     ):
         initialize_app.side_effect = ValueError()
         cred, options, name = "my-creds", "my-options", "my-name"
@@ -258,7 +292,9 @@ class TestTryInitializeApp:
         initialize_app.assert_called_once_with(cred, options=options, name=name)
 
     def test_suppresses_ValueError_when_admin_app_already_exists_if_configured(
-        self, initialize_app: InitializeAppFixture, get_app: GetAppFixture
+        self,
+        initialize_app: InitializeAppFixture,
+        get_app: GetAppFixture,
     ):
         initialize_app.side_effect = ValueError()
         cred, options, name = "my-creds", "my-options", "my-name"
